@@ -22,6 +22,7 @@ export function MapView({
   zoom = 3,
 }: MapViewProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
+  const lastBoundsRef = useRef<google.maps.LatLngBoundsLiteral | null>(null);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
@@ -35,15 +36,24 @@ export function MapView({
   const handleIdle = useCallback(() => {
     const map = mapRef.current;
     if (!map || !onBoundsChange) return;
-    const bounds = map.getBounds();
-    if (bounds) {
-      onBoundsChange({
-        north: bounds.getNorthEast().lat(),
-        east: bounds.getNorthEast().lng(),
-        south: bounds.getSouthWest().lat(),
-        west: bounds.getSouthWest().lng(),
-      });
-    }
+    const b = map.getBounds();
+    if (!b) return;
+    const next = {
+      north: b.getNorthEast().lat(),
+      east: b.getNorthEast().lng(),
+      south: b.getSouthWest().lat(),
+      west: b.getSouthWest().lng(),
+    };
+    const prev = lastBoundsRef.current;
+    if (
+      prev &&
+      Math.abs(prev.north - next.north) < 0.0001 &&
+      Math.abs(prev.south - next.south) < 0.0001 &&
+      Math.abs(prev.east - next.east) < 0.0001 &&
+      Math.abs(prev.west - next.west) < 0.0001
+    ) return;
+    lastBoundsRef.current = next;
+    onBoundsChange(next);
   }, [onBoundsChange]);
 
   const handleClick = useCallback(
