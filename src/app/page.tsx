@@ -5,7 +5,7 @@ import { POIMarker } from '@/components/map/POIMarker';
 import { MapControls } from '@/components/map/MapControls';
 import { Sidebar } from '@/components/social/Sidebar';
 import { POIDetailModal } from '@/components/poi/POIDetailModal';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import type { POI, Tag } from '@/types';
 import Link from 'next/link';
 
@@ -57,12 +57,27 @@ export default function SocialPage() {
         <h1 className="text-lg font-bold text-blue-600">✈️ TravelPassport</h1>
         <div className="flex items-center gap-2">
           {session ? (
-            <Link
-              href="/passport"
-              className="text-sm px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
-            >
-              My Passport
-            </Link>
+            <>
+              <Link
+                href="/passport"
+                className="text-sm px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+              >
+                My Passport
+              </Link>
+              {session.user.image && (
+                <img
+                  src={session.user.image}
+                  alt={session.user.name ?? ''}
+                  className="w-8 h-8 rounded-full border border-gray-200"
+                />
+              )}
+              <button
+                onClick={() => signOut()}
+                className="text-sm px-3 py-1.5 border border-gray-300 rounded-full hover:bg-gray-50 transition text-gray-600"
+              >
+                Salir
+              </button>
+            </>
           ) : (
             <button
               onClick={() => signIn('google')}

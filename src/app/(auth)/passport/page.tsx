@@ -5,7 +5,7 @@ import { POIMarker } from '@/components/map/POIMarker';
 import { StatsHeader } from '@/components/passport/StatsHeader';
 import { POIDetailModal } from '@/components/poi/POIDetailModal';
 import { POIForm } from '@/components/poi/POIForm';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import type { POI } from '@/types';
 import Link from 'next/link';
 
@@ -78,12 +78,20 @@ export default function PassportPage() {
           ← Social
         </Link>
         <h1 className="text-lg font-bold text-blue-600">✈️ My Passport</h1>
-        <Link
-          href="/globalpassport"
-          className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
-        >
-          🎫 GlobalPassport
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/globalpassport"
+            className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
+          >
+            🎫 GlobalPassport
+          </Link>
+          <button
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="text-sm px-3 py-1.5 border border-gray-300 rounded-full hover:bg-gray-50 transition text-gray-600"
+          >
+            Salir
+          </button>
+        </div>
       </header>
 
       {/* Stats bar */}
