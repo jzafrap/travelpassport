@@ -65,7 +65,11 @@ export function GlobalPassportDiploma({ user, pois, stats }: DiplomaProps) {
       {/* Diploma card */}
       <div
         ref={diplomaRef}
-        className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white rounded-2xl p-8 w-full max-w-2xl shadow-2xl border border-indigo-500/30"
+        className="text-white rounded-2xl p-8 w-full max-w-2xl shadow-2xl"
+        style={{
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #312e81 100%)',
+          border: '1px solid rgba(99,102,241,0.3)',
+        }}
       >
         {/* Header */}
         <div className="text-center mb-5">
@@ -73,14 +77,14 @@ export function GlobalPassportDiploma({ user, pois, stats }: DiplomaProps) {
           <h1 className="text-2xl font-bold tracking-[0.2em] uppercase text-white">
             TravelPassport
           </h1>
-          <p className="text-indigo-300 text-xs tracking-widest uppercase mt-0.5">
+          <p className="text-xs tracking-widest uppercase mt-0.5" style={{ color: '#a5b4fc' }}>
             Global Explorer Certificate
           </p>
-          <div className="h-px bg-gradient-to-r from-transparent via-indigo-400 to-transparent mt-3" />
+          <div className="h-px mt-3" style={{ background: 'linear-gradient(to right, transparent, #818cf8, transparent)' }} />
         </div>
 
         {/* World map */}
-        <div className="rounded-xl overflow-hidden bg-slate-800/60 border border-slate-700/50 mb-5">
+        <div className="rounded-xl overflow-hidden mb-5" style={{ background: 'rgba(30,41,59,0.6)', border: '1px solid rgba(51,65,85,0.5)' }}>
           <ComposableMap
             projectionConfig={{ scale: 147 }}
             height={200}
@@ -116,13 +120,13 @@ export function GlobalPassportDiploma({ user, pois, stats }: DiplomaProps) {
         <div className="flex justify-between items-end mb-4">
           <div>
             <p className="text-xl font-bold">{user.alias ?? user.name}</p>
-            <p className="text-indigo-300 text-sm">
+            <p className="text-sm" style={{ color: '#a5b4fc' }}>
               Viajero desde{' '}
               {format(new Date(stats.memberSince), 'MMMM yyyy', { locale: es })}
             </p>
           </div>
           {stats.firstTrip && stats.lastTrip && (
-            <div className="text-right text-sm text-indigo-200">
+            <div className="text-right text-sm" style={{ color: '#c7d2fe' }}>
               <p>
                 {format(new Date(stats.firstTrip), 'yyyy')} –{' '}
                 {format(new Date(stats.lastTrip), 'yyyy')}
@@ -132,26 +136,26 @@ export function GlobalPassportDiploma({ user, pois, stats }: DiplomaProps) {
         </div>
 
         {/* Stats bar */}
-        <div className="grid grid-cols-4 gap-3 pt-4 border-t border-indigo-500/30">
+        <div className="grid grid-cols-4 gap-3 pt-4" style={{ borderTop: '1px solid rgba(99,102,241,0.3)' }}>
           <div className="text-center">
-            <div className="text-2xl font-bold text-amber-400">{stats.totalPois}</div>
-            <div className="text-xs text-indigo-300 mt-0.5">destinos</div>
+            <div className="text-2xl font-bold" style={{ color: '#fbbf24' }}>{stats.totalPois}</div>
+            <div className="text-xs mt-0.5" style={{ color: '#a5b4fc' }}>destinos</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-amber-400">{approxCountries}</div>
-            <div className="text-xs text-indigo-300 mt-0.5">países aprox.</div>
+            <div className="text-2xl font-bold" style={{ color: '#fbbf24' }}>{approxCountries}</div>
+            <div className="text-xs mt-0.5" style={{ color: '#a5b4fc' }}>países aprox.</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-amber-400">
+            <div className="text-2xl font-bold" style={{ color: '#fbbf24' }}>
               {stats.totalLikesReceived}
             </div>
-            <div className="text-xs text-indigo-300 mt-0.5">likes</div>
+            <div className="text-xs mt-0.5" style={{ color: '#a5b4fc' }}>likes</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-amber-400">
+            <div className="text-2xl font-bold" style={{ color: '#fbbf24' }}>
               ⭐ {stats.avgRating || '—'}
             </div>
-            <div className="text-xs text-indigo-300 mt-0.5">rating</div>
+            <div className="text-xs mt-0.5" style={{ color: '#a5b4fc' }}>rating</div>
           </div>
         </div>
       </div>
