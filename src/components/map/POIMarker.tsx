@@ -9,11 +9,6 @@ interface POIMarkerProps {
 }
 
 export function POIMarker({ poi, onClick }: POIMarkerProps) {
-  const tagEmojis = poi.tags
-    .slice(0, 3)
-    .map(t => t.emoji)
-    .join('');
-
   return (
     <OverlayView
       position={{ lat: poi.lat, lng: poi.lng }}
@@ -39,13 +34,6 @@ export function POIMarker({ poi, onClick }: POIMarkerProps) {
             </div>
           )}
         </div>
-
-        {/* Tag emoji badge */}
-        {tagEmojis && (
-          <div className="absolute -top-1 -right-1 text-xs bg-white rounded-full px-0.5 shadow leading-none">
-            {tagEmojis}
-          </div>
-        )}
 
         {/* Hover tooltip */}
         <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
