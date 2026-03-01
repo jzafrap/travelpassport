@@ -1,0 +1,125 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
+  extensions = [postgis]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  googleId  String   @unique @map("google_id")
+  email     String   @unique
+  name      String
+  alias     String?
+  residence String?
+  age       Int?
+  avatarUrl String?  @map("avatar_url")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  pois      Poi[]
+  likes     Like[]
+  ratings   Rating[]
+  wishlist  Wishlist[]
+
+  @@map("users")
+}
+
+model Poi {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  title        String
+  description  String?
+  lat          Float
+  lng          Float
+  dateVisited  DateTime  @map("date_visited") @db.Date
+  mainPhotoId  String?   @map("main_photo_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos   Photo[]
+  poiTags  PoiTag[]
+  likes    Like[]
+  ratings  Rating[]
+  wishlist Wishlist[]
+
+  @@map("pois")
+}
+
+model Photo {
+  id                 String   @id @default(uuid())
+  poiId              String   @map("poi_id")
+  cloudinaryUrl      String   @map("cloudinary_url")
+  cloudinaryPublicId String   @map("cloudinary_public_id")
+  thumbnailUrl       String   @map("thumbnail_url")
+  isMain             Boolean  @default(false) @map("is_main")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  poi Poi @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@map("photos")
+}
+
+model Tag {
+  id      String   @id @default(uuid())
+  key     String   @unique
+  label   String
+  emoji   String
+  color   String   @default("#6B7280")
+  poiTags PoiTag[]
+
+  @@map("tags")
+}
+
+model PoiTag {
+  poiId String @map("poi_id")
+  tagId String @map("tag_id")
+
+  poi Poi @relation(fields: [poiId], references: [id], onDelete: Cascade)
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([poiId, tagId])
+  @@map("poi_tags")
+}
+
+model Like {
+  userId    String   @map("user_id")
+  poiId     String   @map("poi_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  poi  Poi  @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@id([userId, poiId])
+  @@map("likes")
+}
+
+model Rating {
+  userId    String   @map("user_id")
+  poiId     String   @map("poi_id")
+  stars     Int
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  poi  Poi  @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@id([userId, poiId])
+  @@map("ratings")
+}
+
+model Wishlist {
+  userId    String   @map("user_id")
+  poiId     String   @map("poi_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  poi  Poi  @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@id([userId, poiId])
+  @@map("wishlist")
+}
