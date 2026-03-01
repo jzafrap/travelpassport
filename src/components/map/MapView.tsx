@@ -32,7 +32,7 @@ export function MapView({
     mapRef.current = map;
   }, []);
 
-  const handleBoundsChanged = useCallback(() => {
+  const handleIdle = useCallback(() => {
     const map = mapRef.current;
     if (!map || !onBoundsChange) return;
     const bounds = map.getBounds();
@@ -65,7 +65,7 @@ export function MapView({
       center={center ?? defaultCenter}
       zoom={zoom}
       onLoad={onLoad}
-      onBoundsChanged={handleBoundsChanged}
+      onIdle={handleIdle}
       onClick={handleClick}
       options={{ streetViewControl: false, mapTypeControl: false }}
     >
