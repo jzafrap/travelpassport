@@ -23,6 +23,10 @@ export function MapView({
 }: MapViewProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
   const lastBoundsRef = useRef<google.maps.LatLngBoundsLiteral | null>(null);
+  // Capture initial values in refs so the object reference never changes between
+  // renders — prevents @react-google-maps/api from calling panTo on every re-render.
+  const initialCenter = useRef(center ?? defaultCenter);
+  const initialZoom = useRef(zoom);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
@@ -72,8 +76,8 @@ export function MapView({
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
-      center={center ?? defaultCenter}
-      zoom={zoom}
+      center={initialCenter.current}
+      zoom={initialZoom.current}
       onLoad={onLoad}
       onIdle={handleIdle}
       onClick={handleClick}
