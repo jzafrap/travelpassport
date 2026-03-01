@@ -60,7 +60,6 @@ export function POIDetailModal({
       body: JSON.stringify({ stars }),
     });
     if (res.ok) {
-      // Recalculate avg optimistically
       const base = ratingsAvg * ratingsCount;
       if (prev === 0) {
         setRatingsAvg((base + stars) / (ratingsCount + 1));
@@ -83,34 +82,35 @@ export function POIDetailModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+        className="bg-slate-900 border border-slate-700/60 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Main photo */}
         {activePhoto && (
-          <div className="relative h-56 bg-gray-200">
+          <div className="relative h-56 bg-slate-800">
             <Image
               src={activePhoto.cloudinaryUrl}
               alt={poi.title}
               fill
-              className="object-cover rounded-t-xl"
+              className="object-cover rounded-t-2xl"
             />
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-900/80 to-transparent rounded-b-none" />
           </div>
         )}
 
         {/* Photo strip */}
         {poi.photos.length > 1 && (
-          <div className="flex gap-1 p-2 overflow-x-auto bg-gray-50">
+          <div className="flex gap-1.5 p-2 overflow-x-auto bg-slate-800/50">
             {poi.photos.map(photo => (
               <button key={photo.id} onClick={() => setActivePhoto(photo)}>
                 <img
                   src={photo.thumbnailUrl}
-                  className={`w-14 h-14 rounded object-cover flex-shrink-0 border-2 transition-colors ${
-                    activePhoto?.id === photo.id ? 'border-blue-500' : 'border-transparent'
+                  className={`w-14 h-14 rounded-lg object-cover flex-shrink-0 border-2 transition-colors ${
+                    activePhoto?.id === photo.id ? 'border-indigo-500' : 'border-transparent'
                   }`}
                   alt=""
                 />
@@ -122,16 +122,16 @@ export function POIDetailModal({
         {/* Content */}
         <div className="p-4">
           <div className="flex justify-between items-start gap-2">
-            <h2 className="text-lg font-semibold leading-tight">{poi.title}</h2>
+            <h2 className="text-lg font-semibold text-slate-100 leading-tight">{poi.title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl leading-none flex-shrink-0"
+              className="text-slate-500 hover:text-slate-200 text-2xl leading-none flex-shrink-0 transition-colors"
             >
               ×
             </button>
           </div>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-slate-400 mt-1">
             📅{' '}
             {format(new Date(poi.dateVisited), 'dd MMM yyyy', { locale: es })} ·{' '}
             👤 @{poi.author?.alias ?? poi.author?.name}
@@ -143,7 +143,7 @@ export function POIDetailModal({
               {poi.tags.map(t => (
                 <span
                   key={t.key}
-                  className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700"
+                  className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700"
                 >
                   {t.emoji} {t.label}
                 </span>
@@ -152,7 +152,7 @@ export function POIDetailModal({
           )}
 
           {poi.description && (
-            <p className="text-sm text-gray-700 mt-3 leading-relaxed">{poi.description}</p>
+            <p className="text-sm text-slate-300 mt-3 leading-relaxed">{poi.description}</p>
           )}
 
           {/* Actions */}
@@ -160,11 +160,11 @@ export function POIDetailModal({
             <button
               onClick={handleLike}
               disabled={!session}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm border transition ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm border transition ${
                 liked
-                  ? 'bg-red-50 border-red-300 text-red-600'
-                  : 'border-gray-300 hover:border-red-300'
-              } disabled:opacity-50`}
+                  ? 'bg-rose-500/20 border-rose-500/50 text-rose-400'
+                  : 'border-slate-600 text-slate-400 hover:border-rose-500/50 hover:text-rose-400'
+              } disabled:opacity-40`}
             >
               {liked ? '♥' : '♡'} {likeCount}
             </button>
@@ -172,11 +172,11 @@ export function POIDetailModal({
             <button
               onClick={handleWishlist}
               disabled={!session}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm border transition ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm border transition ${
                 wishlisted
-                  ? 'bg-yellow-50 border-yellow-400 text-yellow-700'
-                  : 'border-gray-300 hover:border-yellow-300'
-              } disabled:opacity-50`}
+                  ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+                  : 'border-slate-600 text-slate-400 hover:border-amber-500/50 hover:text-amber-400'
+              } disabled:opacity-40`}
             >
               {wishlisted ? '🔖' : '📌'} {wishlisted ? 'Guardado' : 'Guardar'}
             </button>
@@ -200,11 +200,11 @@ export function POIDetailModal({
                   ))}
                 </div>
               ) : (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-slate-400">
                   ⭐ {ratingsAvg.toFixed(1)}
                 </span>
               )}
-              <span className="text-xs text-gray-400 ml-1">
+              <span className="text-xs text-slate-500 ml-1">
                 {ratingsAvg.toFixed(1)} ({ratingsCount})
               </span>
             </div>
@@ -212,17 +212,17 @@ export function POIDetailModal({
 
           {/* Owner actions */}
           {showEditDelete && (
-            <div className="flex gap-2 mt-3 pt-3 border-t">
+            <div className="flex gap-2 mt-3 pt-3 border-t border-slate-700/60">
               <button
                 onClick={() => onEdit?.(poi)}
-                className="flex-1 py-1.5 text-sm border border-blue-300 text-blue-600 rounded-lg hover:bg-blue-50 transition"
+                className="flex-1 py-1.5 text-sm border border-indigo-500/40 text-indigo-400 rounded-xl hover:bg-indigo-500/10 transition"
               >
                 ✏️ Editar
               </button>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="flex-1 py-1.5 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition disabled:opacity-50"
+                className="flex-1 py-1.5 text-sm border border-rose-500/40 text-rose-400 rounded-xl hover:bg-rose-500/10 transition disabled:opacity-50"
               >
                 🗑 {deleting ? 'Eliminando...' : 'Eliminar'}
               </button>

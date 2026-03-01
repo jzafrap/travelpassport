@@ -76,23 +76,29 @@ export function POIForm({ initialLat, initialLng, poi, onSaved, onClose }: POIFo
     setSaving(false);
   };
 
+  const inputClass =
+    'w-full bg-slate-800 border border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent';
+  const labelClass = 'text-xs text-slate-400 mb-1 block';
+
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto"
+        className="bg-slate-900 border border-slate-700/60 rounded-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
-          <h2 className="font-bold text-lg">{poi ? 'Editar viaje' : 'Nuevo viaje'}</h2>
+          <h2 className="font-bold text-lg text-slate-100">
+            {poi ? 'Editar viaje' : 'Nuevo viaje'}
+          </h2>
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+            className="text-slate-500 hover:text-slate-200 text-2xl leading-none transition-colors"
           >
             ×
           </button>
@@ -105,7 +111,7 @@ export function POIForm({ initialLat, initialLng, poi, onSaved, onClose }: POIFo
             placeholder="Título del viaje *"
             value={form.title}
             onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className={inputClass}
           />
         </div>
 
@@ -115,51 +121,51 @@ export function POIForm({ initialLat, initialLng, poi, onSaved, onClose }: POIFo
             placeholder="Descripción (opcional)"
             value={form.description}
             onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-            className="w-full border rounded-lg px-3 py-2 text-sm h-20 resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className={`${inputClass} h-20 resize-none`}
           />
         </div>
 
         {/* Date */}
         <div className="mb-3">
-          <label className="text-xs text-gray-500 mb-1 block">Fecha de visita *</label>
+          <label className={labelClass}>Fecha de visita *</label>
           <input
             type="date"
             required
             value={form.dateVisited}
             onChange={e => setForm(f => ({ ...f, dateVisited: e.target.value }))}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className={`${inputClass} [color-scheme:dark]`}
           />
         </div>
 
         {/* Coordinates */}
         <div className="flex gap-2 mb-3">
           <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Latitud</label>
+            <label className={labelClass}>Latitud</label>
             <input
               type="number"
               step="any"
               placeholder="0.000000"
               value={form.lat}
               onChange={e => setForm(f => ({ ...f, lat: e.target.value }))}
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className={inputClass}
             />
           </div>
           <div className="flex-1">
-            <label className="text-xs text-gray-500 mb-1 block">Longitud</label>
+            <label className={labelClass}>Longitud</label>
             <input
               type="number"
               step="any"
               placeholder="0.000000"
               value={form.lng}
               onChange={e => setForm(f => ({ ...f, lng: e.target.value }))}
-              className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className={inputClass}
             />
           </div>
         </div>
 
         {/* Tags */}
         <div className="mb-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
             Categorías
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -170,8 +176,8 @@ export function POIForm({ initialLat, initialLng, poi, onSaved, onClose }: POIFo
                 onClick={() => toggleTag(tag.key)}
                 className={`px-2 py-0.5 rounded-full text-xs border transition-colors ${
                   selectedTagKeys.includes(tag.key)
-                    ? 'bg-blue-500 text-white border-blue-500'
-                    : 'bg-white text-gray-600 border-gray-300 hover:border-blue-300'
+                    ? 'bg-indigo-600 text-white border-indigo-600'
+                    : 'bg-slate-800 text-slate-300 border-slate-600 hover:border-indigo-500'
                 }`}
               >
                 {tag.emoji} {tag.label}
@@ -180,10 +186,10 @@ export function POIForm({ initialLat, initialLng, poi, onSaved, onClose }: POIFo
           </div>
         </div>
 
-        {/* Photos — only available after POI is saved (has an ID) */}
+        {/* Photos */}
         {savedPoiId && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">
               Fotos
             </p>
             <PhotoUploader
@@ -199,19 +205,17 @@ export function POIForm({ initialLat, initialLng, poi, onSaved, onClose }: POIFo
         )}
 
         {!savedPoiId && (
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             💡 Guarda el viaje primero para poder añadir fotos.
           </p>
         )}
 
-        {error && (
-          <p className="text-sm text-red-500 mb-3">{error}</p>
-        )}
+        {error && <p className="text-sm text-rose-400 mb-3">{error}</p>}
 
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition disabled:opacity-50"
+          className="w-full py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-500 transition disabled:opacity-50"
         >
           {saving ? 'Guardando...' : poi ? 'Guardar cambios' : 'Crear viaje'}
         </button>

@@ -53,14 +53,16 @@ export default function SocialPage() {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-2 bg-white border-b shadow-sm z-10">
-        <h1 className="text-lg font-bold text-blue-600">✈️ TravelPassport</h1>
+      <header className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-700/60 z-10 flex-shrink-0">
+        <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+          ✈️ TravelPassport
+        </h1>
         <div className="flex items-center gap-2">
           {session ? (
             <>
               <Link
                 href="/passport"
-                className="text-sm px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+                className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition font-medium"
               >
                 My Passport
               </Link>
@@ -68,12 +70,12 @@ export default function SocialPage() {
                 <img
                   src={session.user.image}
                   alt={session.user.name ?? ''}
-                  className="w-8 h-8 rounded-full border border-gray-200"
+                  className="w-8 h-8 rounded-full border-2 border-slate-600"
                 />
               )}
               <button
                 onClick={() => signOut()}
-                className="text-sm px-3 py-1.5 border border-gray-300 rounded-full hover:bg-gray-50 transition text-gray-600"
+                className="text-sm px-3 py-1.5 border border-slate-600 rounded-xl hover:bg-slate-800 transition text-slate-300"
               >
                 Salir
               </button>
@@ -81,7 +83,7 @@ export default function SocialPage() {
           ) : (
             <button
               onClick={() => signIn('google')}
-              className="text-sm px-3 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition"
+              className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-500 transition font-medium"
             >
               Login con Google
             </button>

@@ -9,14 +9,17 @@ interface StatsHeaderProps {
 
 export function StatsHeader({ user, stats }: StatsHeaderProps) {
   return (
-    <div className="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+    <div
+      className="flex items-center gap-4 px-4 py-3 text-white flex-shrink-0"
+      style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)' }}
+    >
       {user.avatarUrl && (
         <Image
           src={user.avatarUrl}
           alt={user.name}
           width={48}
           height={48}
-          className="rounded-full border-2 border-white flex-shrink-0"
+          className="rounded-full border-2 border-white/30 flex-shrink-0"
         />
       )}
       <div className="min-w-0">
@@ -24,21 +27,21 @@ export function StatsHeader({ user, stats }: StatsHeaderProps) {
           {user.alias ?? user.name}
         </h2>
         {user.residence && (
-          <p className="text-sm opacity-80 truncate">📍 {user.residence}</p>
+          <p className="text-sm text-indigo-200 truncate">📍 {user.residence}</p>
         )}
       </div>
-      <div className="ml-auto flex gap-4 text-center flex-shrink-0">
+      <div className="ml-auto flex gap-5 text-center flex-shrink-0">
         <div>
           <div className="text-2xl font-bold">{stats.totalPois}</div>
-          <div className="text-xs opacity-75">viajes</div>
+          <div className="text-xs text-indigo-200 mt-0.5">viajes</div>
         </div>
         <div>
           <div className="text-2xl font-bold">{stats.totalLikesReceived}</div>
-          <div className="text-xs opacity-75">likes</div>
+          <div className="text-xs text-indigo-200 mt-0.5">likes</div>
         </div>
         <div>
           <div className="text-2xl font-bold">{stats.avgRating || '—'}</div>
-          <div className="text-xs opacity-75">rating</div>
+          <div className="text-xs text-indigo-200 mt-0.5">rating</div>
         </div>
       </div>
     </div>

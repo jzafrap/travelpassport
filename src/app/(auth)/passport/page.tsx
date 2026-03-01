@@ -73,21 +73,23 @@ export default function PassportPage() {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-2 bg-white border-b shadow-sm z-10">
-        <Link href="/" className="text-sm text-gray-500 hover:text-blue-600 transition">
+      <header className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-700/60 z-10 flex-shrink-0">
+        <Link href="/" className="text-sm text-slate-400 hover:text-indigo-400 transition">
           ← Social
         </Link>
-        <h1 className="text-lg font-bold text-blue-600">✈️ My Passport</h1>
+        <h1 className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+          ✈️ My Passport
+        </h1>
         <div className="flex items-center gap-2">
           <Link
             href="/globalpassport"
-            className="text-sm px-3 py-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition"
+            className="text-sm px-3 py-1.5 bg-violet-600 text-white rounded-xl hover:bg-violet-500 transition font-medium"
           >
             🎫 GlobalPassport
           </Link>
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="text-sm px-3 py-1.5 border border-gray-300 rounded-full hover:bg-gray-50 transition text-gray-600"
+            className="text-sm px-3 py-1.5 border border-slate-600 rounded-xl hover:bg-slate-800 transition text-slate-300"
           >
             Salir
           </button>
@@ -100,28 +102,28 @@ export default function PassportPage() {
       {/* Main layout */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-56 bg-white border-r flex flex-col flex-shrink-0 overflow-hidden">
-          <div className="p-3 border-b">
+        <aside className="w-56 bg-slate-900 border-r border-slate-700/60 flex flex-col flex-shrink-0 overflow-hidden">
+          <div className="p-3 border-b border-slate-700/60">
             <button
               onClick={() => {
                 setClickedLatLng(null);
                 setShowNewForm(true);
               }}
-              className="w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+              className="w-full py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-500 transition"
             >
               ➕ Nuevo viaje
             </button>
-            <p className="text-xs text-gray-400 mt-2 text-center">
+            <p className="text-xs text-slate-500 mt-2 text-center">
               O haz clic en el mapa
             </p>
           </div>
 
           <div className="flex-1 overflow-y-auto p-2">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide px-1 mb-1">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest px-1 mb-1">
               Mis destinos ({pois.length})
             </p>
             {pois.length === 0 && (
-              <p className="text-xs text-gray-400 px-1 py-2">
+              <p className="text-xs text-slate-500 px-1 py-2">
                 Aún no tienes viajes registrados.
               </p>
             )}
@@ -129,9 +131,9 @@ export default function PassportPage() {
               <button
                 key={poi.id}
                 onClick={() => setSelectedPoi(poi)}
-                className="w-full text-left text-sm py-1.5 px-2 rounded hover:bg-gray-50 truncate flex items-center gap-1"
+                className="w-full text-left text-sm py-1.5 px-2 rounded-lg hover:bg-slate-800 truncate flex items-center gap-1 transition-colors text-slate-200"
               >
-                <span className="text-gray-400">📍</span>
+                <span className="text-slate-500">📍</span>
                 <span className="truncate">{poi.title}</span>
               </button>
             ))}
