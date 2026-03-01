@@ -42,8 +42,9 @@ export async function POST(req: NextRequest) {
 
   for (const item of mediaItems) {
     try {
-      // Append =d to baseUrl to get the full-resolution download URL
-      const uploadResult = await cloudinary.uploader.upload(`${item.baseUrl}=d`, {
+      // baseUrl is nested under mediaFile per the Picker API v1 spec
+      const baseUrl = item.mediaFile?.baseUrl ?? item.baseUrl;
+      const uploadResult = await cloudinary.uploader.upload(`${baseUrl}=d`, {
         folder: 'travelpassport',
         resource_type: 'image',
       });
