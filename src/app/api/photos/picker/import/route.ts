@@ -42,12 +42,29 @@ export async function POST(req: NextRequest) {
 
   for (const item of mediaItems) {
     try {
-      // baseUrl is nested under mediaFile per the Picker API v1 spec
+      // baseUrl is nested under mediaFile per the Picker API v1 spec.
+      // The URL requires the OAuth token, so we download the bytes ourselves
+      // and stream them to Cloudinary instead of passing the URL directly.
       const baseUrl = item.mediaFile?.baseUrl ?? item.baseUrl;
-      const uploadResult = await cloudinary.uploader.upload(`${baseUrl}=d`, {
-        folder: 'travelpassport',
-        resource_type: 'image',
+      const imgRes = await fetch(`${baseUrl}=d`, {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
       });
+      if (!imgRes.ok) {
+        console.error('Failed to download photo from Google Photos:', imgRes.status);
+        continue;
+      }
+      const imgBuffer = Buffer.from(await imgRes.arrayBuffer());
+
+      const uploadResult = await new Promise<{ secure_url: string; public_id: string }>(
+        (resolve, reject) => {
+          cloudinary.uploader
+            .upload_stream({ folder: 'travelpassport', resource_type: 'image' }, (err, result) => {
+              if (err || !result) reject(err);
+              else resolve(result);
+            })
+            .end(imgBuffer);
+        }
+      );
 
       const isMain = existingCount === 0 && photos.length === 0;
       const photo = await db.photo.create({
