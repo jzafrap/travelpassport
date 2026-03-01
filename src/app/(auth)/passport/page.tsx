@@ -97,7 +97,7 @@ export default function PassportPage() {
       </header>
 
       {/* Stats bar */}
-      <StatsHeader user={user} stats={stats} />
+      <StatsHeader user={user} stats={stats} onUserUpdated={setUser} />
 
       {/* Main layout */}
       <div className="flex flex-1 overflow-hidden">
