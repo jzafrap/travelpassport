@@ -35,7 +35,11 @@ export default function PassportPage() {
   }, []);
 
   const handleMapClick = (lat: number, lng: number) => {
-    if (markerClickedRef.current) return;
+    // If a marker was just clicked, this map click is a ghost event — consume the flag and ignore.
+    if (markerClickedRef.current) {
+      markerClickedRef.current = false;
+      return;
+    }
     setClickedLatLng({ lat, lng });
     setShowNewForm(true);
   };
@@ -43,7 +47,6 @@ export default function PassportPage() {
   const handleMarkerClick = (poi: POI) => {
     markerClickedRef.current = true;
     setSelectedPoi(poi);
-    setTimeout(() => { markerClickedRef.current = false; }, 0);
   };
 
   const handlePoiSaved = (saved: POI) => {
