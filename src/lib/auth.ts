@@ -9,7 +9,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: 'openid email profile',
+          scope: 'openid email profile https://www.googleapis.com/auth/photospicker.mediaitems.readonly',
+          access_type: 'offline',
+          prompt: 'consent',
         },
       },
     }),
@@ -33,6 +35,13 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
+    async jwt({ token, account }) {
+      // Persist Google access token on initial sign-in
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
+      return token;
+    },
     async session({ session, token }) {
       if (token.sub && session.user) {
         const dbUser = await db.user.findUnique({
@@ -44,10 +53,9 @@ export const authOptions: NextAuthOptions = {
           (session.user as any).residence = dbUser.residence;
         }
       }
+      // Expose access token so server-side API routes can call Google Photos Picker
+      session.accessToken = token.accessToken as string | undefined;
       return session;
-    },
-    async jwt({ token }) {
-      return token;
     },
   },
   pages: {
