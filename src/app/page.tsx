@@ -103,7 +103,7 @@ export default function SocialPage() {
         <Sidebar trending={trending} recent={recent} onSelectPoi={setSelectedPoi} />
 
         <div className="flex-1 relative">
-          <MapView onBoundsChange={setBounds}>
+          <MapView onBoundsChange={setBounds} center={{ lat: 40.0, lng: -4.0 }} zoom={6}>
             {pois.map(poi => (
               <POIMarker key={poi.id} poi={poi} onClick={setSelectedPoi} />
             ))}
