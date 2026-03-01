@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapView } from '@/components/map/MapView';
 import { POIMarker } from '@/components/map/POIMarker';
 import { StatsHeader } from '@/components/passport/StatsHeader';
@@ -18,6 +18,8 @@ export default function PassportPage() {
   const [editingPoi, setEditingPoi] = useState<POI | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<{ lat: number; lng: number } | null>(null);
+  // Prevents map click from firing when a POI marker was just clicked
+  const markerClickedRef = useRef(false);
 
   useEffect(() => {
     Promise.all([
@@ -32,8 +34,15 @@ export default function PassportPage() {
   }, []);
 
   const handleMapClick = (lat: number, lng: number) => {
+    if (markerClickedRef.current) return;
     setClickedLatLng({ lat, lng });
     setShowNewForm(true);
+  };
+
+  const handleMarkerClick = (poi: POI) => {
+    markerClickedRef.current = true;
+    setSelectedPoi(poi);
+    setTimeout(() => { markerClickedRef.current = false; }, 0);
   };
 
   const handlePoiSaved = (saved: POI) => {
@@ -125,7 +134,7 @@ export default function PassportPage() {
         <div className="flex-1 relative">
           <MapView onMapClick={handleMapClick}>
             {pois.map(poi => (
-              <POIMarker key={poi.id} poi={poi} onClick={setSelectedPoi} />
+              <POIMarker key={poi.id} poi={poi} onClick={handleMarkerClick} />
             ))}
           </MapView>
         </div>
