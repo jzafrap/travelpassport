@@ -140,7 +140,7 @@ export default function PassportPage() {
 
         {/* Map */}
         <div className="flex-1 relative">
-          <MapView onMapClick={handleMapClick}>
+          <MapView onMapClick={handleMapClick} center={{ lat: 40.0, lng: -4.0 }} zoom={6}>
             {pois.map(poi => (
               <POIMarker key={poi.id} poi={poi} onClick={handleMarkerClick} />
             ))}
