@@ -6,6 +6,7 @@ import { StatsHeader } from '@/components/passport/StatsHeader';
 import { POIDetailModal } from '@/components/poi/POIDetailModal';
 import { POIForm } from '@/components/poi/POIForm';
 import { useSession, signOut } from 'next-auth/react';
+import { format } from 'date-fns';
 import type { POI } from '@/types';
 import Link from 'next/link';
 
@@ -127,16 +128,18 @@ export default function PassportPage() {
                 Aún no tienes viajes registrados.
               </p>
             )}
-            {pois.map(poi => (
-              <button
-                key={poi.id}
-                onClick={() => setSelectedPoi(poi)}
-                className="w-full text-left text-sm py-1.5 px-2 rounded-lg hover:bg-slate-800 truncate flex items-center gap-1 transition-colors text-slate-200"
-              >
-                <span className="text-slate-500">📍</span>
-                <span className="truncate">{poi.title}</span>
-              </button>
-            ))}
+            {[...pois]
+              .sort((a, b) => new Date(b.dateVisited).getTime() - new Date(a.dateVisited).getTime())
+              .map(poi => (
+                <button
+                  key={poi.id}
+                  onClick={() => setSelectedPoi(poi)}
+                  className="w-full text-left py-1.5 px-2 rounded-lg hover:bg-slate-800 transition-colors flex flex-col"
+                >
+                  <span className="text-sm text-slate-200 truncate">{poi.title}</span>
+                  <span className="text-xs text-slate-500">{format(new Date(poi.dateVisited), 'dd MMM yyyy')}</span>
+                </button>
+              ))}
           </div>
         </aside>
 
