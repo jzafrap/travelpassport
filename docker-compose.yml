@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://tp_user:tp_password@db:5432/travelpassport
+      DIRECT_URL: postgresql://tp_user:tp_password@db:5432/travelpassport
+
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_DB: travelpassport
+      POSTGRES_USER: tp_user
+      POSTGRES_PASSWORD: tp_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tp_user -d travelpassport"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
