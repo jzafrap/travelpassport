@@ -29,6 +29,10 @@ export function POIDetailModal({
   const [wishlisted, setWishlisted] = useState(poi.userWishlisted ?? false);
   const [activePhoto, setActivePhoto] = useState(poi.mainPhoto ?? poi.photos[0] ?? null);
   const [deleting, setDeleting] = useState(false);
+  const [userRating, setUserRating] = useState(poi.userRating ?? 0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [ratingsAvg, setRatingsAvg] = useState(poi.ratingsAvg);
+  const [ratingsCount, setRatingsCount] = useState(poi.ratingsCount);
 
   const handleLike = async () => {
     if (!session) return;
@@ -44,6 +48,29 @@ export function POIDetailModal({
     const res = await fetch(`/api/pois/${poi.id}/wishlist`, { method: 'POST' });
     const data = await res.json();
     setWishlisted(data.wishlisted);
+  };
+
+  const handleRate = async (stars: number) => {
+    if (!session) return;
+    const prev = userRating;
+    setUserRating(stars);
+    const res = await fetch(`/api/pois/${poi.id}/rate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stars }),
+    });
+    if (res.ok) {
+      // Recalculate avg optimistically
+      const base = ratingsAvg * ratingsCount;
+      if (prev === 0) {
+        setRatingsAvg((base + stars) / (ratingsCount + 1));
+        setRatingsCount(c => c + 1);
+      } else {
+        setRatingsAvg((base - prev + stars) / ratingsCount);
+      }
+    } else {
+      setUserRating(prev);
+    }
   };
 
   const handleDelete = async () => {
@@ -154,10 +181,33 @@ export function POIDetailModal({
               {wishlisted ? '🔖' : '📌'} {wishlisted ? 'Guardado' : 'Guardar'}
             </button>
 
-            <span className="flex items-center gap-1 text-sm text-gray-600 ml-auto">
-              ⭐ {poi.ratingsAvg.toFixed(1)}
-              <span className="text-xs text-gray-400">({poi.ratingsCount})</span>
-            </span>
+            <div className="flex items-center gap-1 ml-auto">
+              {session ? (
+                <div
+                  className="flex items-center gap-0.5"
+                  onMouseLeave={() => setHoverRating(0)}
+                  title="Valora este viaje"
+                >
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      onClick={() => handleRate(star)}
+                      onMouseEnter={() => setHoverRating(star)}
+                      className="text-xl leading-none transition-transform hover:scale-110"
+                    >
+                      {star <= (hoverRating || userRating) ? '⭐' : '☆'}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-sm text-gray-500">
+                  ⭐ {ratingsAvg.toFixed(1)}
+                </span>
+              )}
+              <span className="text-xs text-gray-400 ml-1">
+                {ratingsAvg.toFixed(1)} ({ratingsCount})
+              </span>
+            </div>
           </div>
 
           {/* Owner actions */}
