@@ -87,7 +87,7 @@ export function GlobalPassportDiploma({ user, pois, stats }: DiplomaProps) {
         <div className="rounded-xl overflow-hidden mb-5" style={{ background: 'rgba(30,41,59,0.6)', border: '1px solid rgba(51,65,85,0.5)' }}>
           <ComposableMap
             projectionConfig={{ scale: 147 }}
-            height={200}
+            height={400}
             style={{ width: '100%', height: 'auto' }}
           >
             <Geographies geography={GEO_URL}>
