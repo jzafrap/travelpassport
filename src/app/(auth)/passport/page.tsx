@@ -71,10 +71,6 @@ export default function PassportPage() {
     fetch('/api/users/me/stats').then(r => r.json()).then(setStats);
   };
 
-  const handleWishlistRemoved = (poiId: string) => {
-    setWishlist(prev => prev.filter(p => p.id !== poiId));
-  };
-
   if (!session || !user || !stats) {
     return (
       <div className="h-screen flex items-center justify-center text-gray-500">
