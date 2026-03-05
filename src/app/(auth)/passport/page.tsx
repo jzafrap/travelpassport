@@ -19,6 +19,9 @@ export default function PassportPage() {
   const [editingPoi, setEditingPoi] = useState<POI | null>(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [clickedLatLng, setClickedLatLng] = useState<{ lat: number; lng: number } | null>(null);
+  const [wishlist, setWishlist] = useState<POI[]>([]);
+  const [destinationsOpen, setDestinationsOpen] = useState(false);
+  const [wishlistOpen, setWishlistOpen] = useState(false);
   // Prevents map click from firing when a POI marker was just clicked
   const markerClickedRef = useRef(false);
 
@@ -27,10 +30,12 @@ export default function PassportPage() {
       fetch('/api/users/me').then(r => r.json()),
       fetch('/api/users/me/stats').then(r => r.json()),
       fetch('/api/users/me/pois').then(r => r.json()),
-    ]).then(([u, s, p]) => {
+      fetch('/api/users/me/wishlist').then(r => r.json()),
+    ]).then(([u, s, p, w]) => {
       setUser(u);
       setStats(s);
       setPois(p);
+      setWishlist(w);
     });
   }, []);
 
@@ -64,6 +69,10 @@ export default function PassportPage() {
   const handlePoiDeleted = (poiId: string) => {
     setPois(prev => prev.filter(p => p.id !== poiId));
     fetch('/api/users/me/stats').then(r => r.json()).then(setStats);
+  };
+
+  const handleWishlistRemoved = (poiId: string) => {
+    setWishlist(prev => prev.filter(p => p.id !== poiId));
   };
 
   if (!session || !user || !stats) {
@@ -122,27 +131,78 @@ export default function PassportPage() {
             </p>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-2">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest px-1 mb-1">
-              Mis destinos ({pois.length})
-            </p>
-            {pois.length === 0 && (
-              <p className="text-xs text-slate-500 px-1 py-2">
-                Aún no tienes viajes registrados.
-              </p>
+          <div className="flex-1 overflow-y-auto">
+            {/* Mis destinos */}
+            <button
+              onClick={() => setDestinationsOpen(o => !o)}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-widest hover:text-slate-200 transition-colors border-b border-slate-700/60"
+            >
+              <span>Mis destinos ({pois.length})</span>
+              <span
+                className="transition-transform duration-200"
+                style={{ transform: destinationsOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+              >
+                ›
+              </span>
+            </button>
+
+            {destinationsOpen && (
+              <div className="p-2">
+                {pois.length === 0 && (
+                  <p className="text-xs text-slate-500 px-1 py-2">
+                    Aún no tienes viajes registrados.
+                  </p>
+                )}
+                {[...pois]
+                  .sort((a, b) => new Date(b.dateVisited).getTime() - new Date(a.dateVisited).getTime())
+                  .map(poi => (
+                    <button
+                      key={poi.id}
+                      onClick={() => setSelectedPoi(poi)}
+                      className="w-full text-left py-1.5 px-2 rounded-lg hover:bg-slate-800 transition-colors flex flex-col"
+                    >
+                      <span className="text-sm text-slate-200 truncate">{poi.title}</span>
+                      <span className="text-xs text-slate-500">{format(new Date(poi.dateVisited), 'dd MMM yyyy')}</span>
+                    </button>
+                  ))}
+              </div>
             )}
-            {[...pois]
-              .sort((a, b) => new Date(b.dateVisited).getTime() - new Date(a.dateVisited).getTime())
-              .map(poi => (
-                <button
-                  key={poi.id}
-                  onClick={() => setSelectedPoi(poi)}
-                  className="w-full text-left py-1.5 px-2 rounded-lg hover:bg-slate-800 transition-colors flex flex-col"
-                >
-                  <span className="text-sm text-slate-200 truncate">{poi.title}</span>
-                  <span className="text-xs text-slate-500">{format(new Date(poi.dateVisited), 'dd MMM yyyy')}</span>
-                </button>
-              ))}
+
+            {/* Wishlist */}
+            <button
+              onClick={() => setWishlistOpen(o => !o)}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-widest hover:text-slate-200 transition-colors border-b border-slate-700/60"
+            >
+              <span>Wishlist ({wishlist.length})</span>
+              <span
+                className="transition-transform duration-200"
+                style={{ transform: wishlistOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+              >
+                ›
+              </span>
+            </button>
+
+            {wishlistOpen && (
+              <div className="p-2">
+                {wishlist.length === 0 && (
+                  <p className="text-xs text-slate-500 px-1 py-2">
+                    No tienes destinos guardados aún.
+                  </p>
+                )}
+                {wishlist.map(poi => (
+                  <button
+                    key={poi.id}
+                    onClick={() => setSelectedPoi(poi)}
+                    className="w-full text-left py-1.5 px-2 rounded-lg hover:bg-slate-800 transition-colors flex flex-col"
+                  >
+                    <span className="text-sm text-slate-200 truncate">{poi.title}</span>
+                    <span className="text-xs text-slate-500">
+                      @{poi.author?.alias ?? poi.author?.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </aside>
 
@@ -160,8 +220,14 @@ export default function PassportPage() {
       {selectedPoi && !editingPoi && (
         <POIDetailModal
           poi={selectedPoi}
-          onClose={() => setSelectedPoi(null)}
-          showEditDelete
+          onClose={() => {
+            const wasInWishlist = wishlist.some(w => w.id === selectedPoi.id);
+            setSelectedPoi(null);
+            if (wasInWishlist) {
+              fetch('/api/users/me/wishlist').then(r => r.json()).then(setWishlist);
+            }
+          }}
+          showEditDelete={pois.some(p => p.id === selectedPoi.id)}
           onEdit={poi => {
             setEditingPoi(poi);
             setSelectedPoi(null);
